@@ -67,10 +67,12 @@ class LLMS_Txt_Markdown {
 			$content   = apply_filters( 'the_content', $post->post_content );
 			$markdown .= self::convert( $content );
 
+			// Allow filtering the final Markdown content before caching.
+			$markdown = apply_filters( 'llms_txt_markdown_content', $markdown, $post );
+
 			set_transient( $cache_key, array( 'modified' => $modified, 'content' => $markdown ), WEEK_IN_SECONDS );
 		}
 
-		// Always apply the runtime filter so hooks are never skipped on cache hits.
-		return apply_filters( 'llms_txt_markdown_content', $markdown, $post );
+		return $markdown;
 	}
 }
