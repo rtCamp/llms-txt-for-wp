@@ -52,6 +52,22 @@ class LLMS_Txt_Admin {
 		);
 
 		add_settings_field(
+			'site_title',
+			__( 'Custom Site Title', 'llms-txt-for-wp' ),
+			array( $this, 'render_site_title_field' ),
+			'llms-txt-settings',
+			'llms_txt_general_section'
+		);
+
+		add_settings_field(
+			'site_description',
+			__( 'Custom Site Description', 'llms-txt-for-wp' ),
+			array( $this, 'render_site_description_field' ),
+			'llms-txt-settings',
+			'llms_txt_general_section'
+		);
+
+		add_settings_field(
 			'selected_post',
 			__( 'Selected Page for llms.txt', 'llms-txt-for-wp' ),
 			array( $this, 'render_selected_post_field' ),
@@ -154,7 +170,6 @@ class LLMS_Txt_Admin {
 					if (selectedPostValue) {
 						hint.textContent = 'the content of the "' + selectedPostText + '" page';
 					} else {
-						// hint.textContent = types.length ? 'all ' + types.join(', ') : 'just the site name and description';
 						if (types.length) {
 							var content = '';
 							if (hasMdSupport) {
@@ -204,6 +219,30 @@ class LLMS_Txt_Admin {
 	}
 
 	/**
+	 * Render site title field.
+	 */
+	public function render_site_title_field() {
+		printf(
+			'<input type="text" id="llms_txt_settings_site_title" name="llms_txt_settings[site_title]" value="%s" class="regular-text" placeholder="%s">',
+			esc_attr( isset( $this->settings['site_title'] ) ? $this->settings['site_title'] : '' ),
+			esc_attr( get_bloginfo( 'name' ) )
+		);
+		echo '<p class="description">' . esc_html__( 'Leave empty to use the default site name.', 'llms-txt-for-wp' ) . '</p>';
+	}
+
+	/**
+	 * Render site description field.
+	 */
+	public function render_site_description_field() {
+		printf(
+			'<textarea id="llms_txt_settings_site_description" name="llms_txt_settings[site_description]" rows="3" class="large-text" placeholder="%s">%s</textarea>',
+			esc_attr( get_bloginfo( 'description' ) ),
+			esc_textarea( isset( $this->settings['site_description'] ) ? $this->settings['site_description'] : '' )
+		);
+		echo '<p class="description">' . esc_html__( 'Leave empty to use the default site tagline.', 'llms-txt-for-wp' ) . '</p>';
+	}
+
+	/**
 	 * Render selected post field.
 	 */
 	public function render_selected_post_field() {
@@ -222,6 +261,9 @@ class LLMS_Txt_Admin {
 	/**
 	 * Render post types field.
 	 */
+	/**
+	 * Render post types field.
+	 */
 	public function render_post_types_field() {
 		$args = array(
 			'public'   => true,
@@ -235,14 +277,17 @@ class LLMS_Txt_Admin {
 				continue;
 			}
 
-			printf(
-				'<label><input type="checkbox" name="llms_txt_settings[post_types][]" value="%s" %s> <span>%s</span></label><br>',
-				esc_attr( $post_type->name ),
-				checked( in_array( $post_type->name, $this->settings['post_types'], true ), true, false ),
-				esc_html( $post_type->label )
-			);
+			$is_checked = in_array( $post_type->name, $this->settings['post_types'], true );
+			?>
+			<div class="llms-txt-post-type-row" style="margin-bottom: 10px;">
+				<label style="font-weight: 500; font-size: 14px; display: inline-flex; align-items: center; cursor: pointer; color: #1d2327;">
+					<input type="checkbox" name="llms_txt_settings[post_types][]" value="<?php echo esc_attr( $post_type->name ); ?>" <?php checked( $is_checked, true ); ?> class="llms-txt-post-type-checkbox" style="margin: 0 8px 0 0;">
+					<span><?php echo esc_html( $post_type->label ); ?></span>
+				</label>
+			</div>
+			<?php
 		}
-		echo '<p class="description">' . esc_html__( 'Select the post types to include in the llms.txt file and the *.md support.', 'llms-txt-for-wp' ) . '</p>';
+		echo '<p class="description">' . esc_html__( 'Select the post types to include in the llms.txt file.', 'llms-txt-for-wp' ) . '</p>';
 	}
 
 	/**
@@ -281,6 +326,8 @@ class LLMS_Txt_Admin {
 		$output['post_types']        = isset( $input['post_types'] ) ? array_map( 'sanitize_text_field', $input['post_types'] ) : array();
 		$output['posts_limit']       = isset( $input['posts_limit'] ) ? absint( $input['posts_limit'] ) : 100;
 		$output['enable_md_support'] = isset( $input['enable_md_support'] ) ? 'yes' : 'no';
+		$output['site_title']        = isset( $input['site_title'] ) ? sanitize_text_field( $input['site_title'] ) : '';
+		$output['site_description']  = isset( $input['site_description'] ) ? sanitize_textarea_field( $input['site_description'] ) : '';
 
 		return $output;
 	}

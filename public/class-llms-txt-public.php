@@ -161,10 +161,12 @@ class LLMS_Txt_Public {
 			}
 		} elseif ( ! empty( $settings['post_types'] ) ) {
 			// All posts, grouped by post type. Also include site name and description.
-			$output .= '# ' . esc_html( get_bloginfo( 'name' ) ) . "\n\n";
-			$bloginfo = get_bloginfo( 'description' );
-			if ( ! empty( $bloginfo ) ) {
-				$output .= esc_html( $bloginfo ) . "\n\n";
+			$site_title       = ! empty( $settings['site_title'] ) ? $settings['site_title'] : get_bloginfo( 'name' );
+			$site_description = ! empty( $settings['site_description'] ) ? $settings['site_description'] : get_bloginfo( 'description' );
+
+			$output .= '# ' . esc_html( $site_title ) . "\n\n";
+			if ( ! empty( $site_description ) ) {
+				$output .= esc_html( $site_description ) . "\n\n";
 			}
 			$output .= "---\n\n";
 
@@ -197,7 +199,7 @@ class LLMS_Txt_Public {
 						'posts_per_page' => $settings['posts_limit'],
 						'post_status'    => 'publish',
 					);
-					$args = apply_filters( 'llms_txt_posts_args', $args, $post_type );
+					$args  = apply_filters( 'llms_txt_posts_args', $args, $post_type );
 					$posts = get_posts( $args );
 
 					if ( ! empty( $posts ) ) {
@@ -209,10 +211,12 @@ class LLMS_Txt_Public {
 				}
 			}
 		} else {
-			$output .= '# ' . esc_html( get_bloginfo( 'name' ) ) . "\n\n";
-			$bloginfo = get_bloginfo( 'description' );
-			if ( ! empty( $bloginfo ) ) {
-				$output .= esc_html( $bloginfo ) . "\n\n";
+			$site_title       = ! empty( $settings['site_title'] ) ? $settings['site_title'] : get_bloginfo( 'name' );
+			$site_description = ! empty( $settings['site_description'] ) ? $settings['site_description'] : get_bloginfo( 'description' );
+
+			$output .= '# ' . esc_html( $site_title ) . "\n\n";
+			if ( ! empty( $site_description ) ) {
+				$output .= esc_html( $site_description ) . "\n\n";
 			}
 			$output .= "---\n\n";
 		}

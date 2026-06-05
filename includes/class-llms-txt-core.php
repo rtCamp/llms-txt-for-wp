@@ -89,6 +89,8 @@ class LLMS_Txt_Core {
 			'post_types'        => array(),
 			'posts_limit'       => 100,
 			'enable_md_support' => 'yes',
+			'site_title'        => '',
+			'site_description'  => '',
 		);
 
 		return wp_parse_args( get_option( 'llms_txt_settings', array() ), $defaults );
