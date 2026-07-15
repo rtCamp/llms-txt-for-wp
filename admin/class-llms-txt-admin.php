@@ -53,7 +53,7 @@ class LLMS_Txt_Admin {
 
 		add_settings_field(
 			'site_title',
-			__( 'Custom Site Title', 'llms-txt-for-wp' ),
+			__( 'Custom Site Title - H1', 'llms-txt-for-wp' ),
 			array( $this, 'render_site_title_field' ),
 			'llms-txt-settings',
 			'llms_txt_general_section'
